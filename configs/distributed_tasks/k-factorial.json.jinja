@@ -1,0 +1,85 @@
+
+{
+      "trainTasks": [
+{%- for core in cores_list -%}
+{%- for memory in memory_list -%}
+{%- for parallelism in parallel_list -%}
+{%- for seed in seeds -%}
+
+    {
+      "type": "distributed",
+      "preemptJobs": false,
+      "lambda":0.5,
+      "jobClassParameters": [
+        {
+          "classProbability": 0.1,
+          "priorities": [
+            {
+              "priority": 1,
+              "probability": 0.9
+            },
+            {
+              "priority": 0,
+              "probability": 0.1
+            }
+          ],
+          "networkConfiguration": {
+            "network": "FashionMNISTCNN",
+            "lossFunction": "CrossEntropyLoss",
+            "dataset": "mnist"
+          },
+          "systemParameters": {
+            "dataParallelism": {{ parallelism }},
+            "configurations": {
+              "default": {
+                "cores": {{ core }},
+                "memory": {{ memory }}
+              }
+            }
+          },
+          "hyperParameters": {
+            "default": {
+              "totalEpochs": 5,
+              "batchSize": 128,
+              "testBatchSize": 128,
+              "learningRateDecay": 0.0002,
+              "optimizerConfig": {
+                "type": "Adam",
+                "learningRate": 0.001,
+                "betas": [
+                  0.9,
+                  0.999
+                ]
+              },
+              "schedulerConfig": {
+                "schedulerStepSize": 50,
+                "schedulerGamma": 0.5,
+                "minimumLearningRate": 1e-10
+              }
+            },
+            "configurations": {
+              "Master": null,
+              "Worker": null
+            }
+          },
+          "learningParameters": {
+            "cuda": false,
+            "dataSampler": {
+                "type": "uniform",
+                "qValue": 0.07,
+                "seed": {{ seed }},
+                "shuffle": true
+            }
+          }
+        }
+      ]
+    }{% if not loop.last %},{% endif %}
+{%- endfor -%}
+{% if not loop.last %},{% endif %}
+{%- endfor -%}
+{% if not loop.last %},{% endif %}
+{%- endfor -%}
+{% if not loop.last %},{% endif %}
+{%- endfor -%}
+  ]
+}

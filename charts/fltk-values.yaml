@@ -1,0 +1,8 @@
+fltk:
+    outputDir: output
+    configDir: config
+    workDir: /opt/federation-lab
+provider:
+    domain: gcr.io
+    projectName: qpeocs-project
+    imageName: fltk:latest
